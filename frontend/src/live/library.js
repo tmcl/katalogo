@@ -52,7 +52,7 @@ export type ImportedBook = {
 var read_library
 	: () => Array<ImportedBook> 
 	= () => {
-		var library = JSON.parse(fs.readFileSync("../data/mea-katalogo-2.json", 'utf-8'))
+		var library = JSON.parse(fs.readFileSync("../../../test-data/mea-katalogo-2.json", 'utf-8'))
 		return library.map ( (book) => ({
 			note: book.hasOwnProperty('note') ? book.note : null,
 			callnumber          : book.hasOwnProperty('callnumber')          ? book.callnumber          : null,
