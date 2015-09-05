@@ -2,23 +2,25 @@
 
 import * as React from 'react'
 import {Table, Column} from 'fixed-data-table'
-import * as Library from './library'
+import {Catalogue, GridBook} from './library'
 
-var GridBook = Library.GridBook
-var rows = Library.get_all_books()
-var rowGetter = rows
+
+var rows = Catalogue().get_all_books()
 
 var LibraryGrid = React.createClass({
 	getInitialState() {
 		return {
-			rows: rows,
+			rows: [],
 			filteredRows: null,
 			filterBy: null
 		}
 	},
 
 	componentWillMount() {
-		this.filterRowsBy(this.state.filterBy)
+		this.props.rows_promise.then(
+				rr => {this.setState({rows: rr});this.filterRowsBy(this.state.filterBy)}
+		)
+
 	},
 
 	filterRowsBy(filterBy) {
@@ -86,6 +88,7 @@ var LibraryGrid = React.createClass({
 })
 
 React.render(
-	<LibraryGrid rows={rows} />,
-    document.getElementById('example')
+	<LibraryGrid rows_promise={rows} />,
+	document.getElementById('example')
 )
+

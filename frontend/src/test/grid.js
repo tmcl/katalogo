@@ -1,8 +1,9 @@
 /* @flow */
 
-import * as assert from 'assert'
-import {LibraryFilter} from '../live/library filter'
-import {GridBook, get_all_books} from '../live/library'
+import * as assert from "assert"
+import {LibraryFilter} from "../live/library filter"
+import {GridBook, Catalogue} from "../live/library"
+import {readFile} from "../live/denodified.js"
 
 var LibraryFilterMock = new LibraryFilter( () => [
 		{
@@ -25,10 +26,16 @@ var LibraryFilterMock = new LibraryFilter( () => [
 		}
 ] )
 
+var mock_library_downloader = () => readFile( "../../../test-data/mea-katalogo-2.json")
+
+
 describe('library', () => {
 	describe('.get_all_books()', () => {
-		it('should get seven books', () => {
-			assert.equal(1649, get_all_books().length)
+		it('should get seven books', (done) => {
+			Catalogue(mock_library_downloader).get_all_books().then( bb => {
+				assert.equal(1649, bb.length)
+				done()
+			})
 		})
 	})
 })
