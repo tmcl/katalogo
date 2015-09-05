@@ -1,7 +1,7 @@
 /* @flow */
 
 //import * as fs from 'fs'
-import {ajax} from './utilities'
+import {ajax, cache_method, liftP1} from './utilities'
 
 export type GridBook = {
   title: string,
@@ -53,14 +53,34 @@ export type ImportedBook = {
 export type LibraryDownloader = () => Promise<string>
 
 export type TCatalogue = { 
-	get_all_books: () => Promise<Array<GridBook>>
+	get_all_books: () => Array<GridBook>
 }
 
-export function Catalogue (library_downloader?: LibraryDownloader): TCatalogue {
-	library_downloader = library_downloader || (() => ajax( "http://localhost/libraro/test-data/mea-katalogo-2.json" ).catch(e => console.log("your dl failed")))
+export var promise_web_catalogue 
+	: () => Promise<TCatalogue>
+	= () => promise_catalogue(ajax( "http://localhost/libraro/test-data/mea-katalogo-2.json" ))
 
-	var download_library: Promise<string> = library_downloader()
+export var promise_catalogue 
+	: (p: Promise<string>) => Promise<TCatalogue>
+	= liftP1(Catalogue)
 
+var imported_book_to_grid_book
+	: (b:ImportedBook) => GridBook
+	= book => ({
+		title: book.title ? book.title : "",
+		author: book.author_1 ? book.author_1 : "",
+		translator: book.translator_1,
+		callnumber: book.callnumber ? book.callnumber : "",
+		pagecount: book.pagecount ? parseInt(book.pagecount)||0 : 0,
+		year: book.year ? parseInt(book.year) || 0 : 0,
+		publisher: book.publisher ? book.publisher : ""
+	})
+
+var imported_books_to_grid_books
+	: (books: Array<ImportedBook>) => Array<GridBook>
+	= (books) => books.map(imported_book_to_grid_book)
+
+export function Catalogue (library_json: string): TCatalogue {
 	var read_library
 		: (json_library: string) => Array<ImportedBook> 
 		= (json_library) => {
@@ -103,51 +123,12 @@ export function Catalogue (library_downloader?: LibraryDownloader): TCatalogue {
 			}))
 	}
 
-	var get_library_cached 
-		: () => Promise<Array<ImportedBook>>
-		= ((library) => () => {
-		if (!library)
-		{
-			console.log("trying library")
-			library = download_library.then(read_library)
-		}
-		return library
-	})(null)
-
-	var imported_book_to_grid_book
-		: (b:ImportedBook) => GridBook
-		= book => ({
-			title: book.title ? book.title : "",
-			author: book.author_1 ? book.author_1 : "",
-			translator: book.translator_1,
-			callnumber: book.callnumber ? book.callnumber : "",
-			pagecount: book.pagecount ? parseInt(book.pagecount)||0 : 0,
-			year: book.year ? parseInt(book.year) || 0 : 0,
-			publisher: book.publisher ? book.publisher : ""
-		})
-
-	var imported_books_to_grid_books
-		: (books: Array<ImportedBook>) => Array<GridBook>
-		= (books) => {
-			console.log(books)
-			return books.map(imported_book_to_grid_book)
-		}
+	var get_library_cached
+		: () => Array<ImportedBook>
+		= cache_method(() => read_library(library_json))
 
 	var get_all_books 
-		: () => Promise<Array<GridBook>>
-		= () => get_library_cached().then(imported_books_to_grid_books)
+		= () => imported_books_to_grid_books(get_library_cached())
 
 	return { get_all_books: get_all_books }
 }
-
-/*
-export var CatalogueMaker 
-	: (f?: LibraryDownloader) => Catalogue
-	= (library_downloader?: LibraryDownloader) => new Catalogue(library_downloader)
-
-export var catalogue = new Catalogue
-export var mock_catalogue = () => {
-	var fs = require('fs')
-	fs.readFile( "../../../test-data/mea-katalogo-2.json", (err, data) => 
-}()
-*/

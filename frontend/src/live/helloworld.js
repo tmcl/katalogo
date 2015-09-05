@@ -2,10 +2,10 @@
 
 import * as React from 'react'
 import {Table, Column} from 'fixed-data-table'
-import {Catalogue, GridBook} from './library'
+import {Catalogue, GridBook, promise_web_catalogue} from './library'
 
 
-var rows = Catalogue().get_all_books()
+var rows = promise_web_catalogue().then( c => c.get_all_books() )
 
 var LibraryGrid = React.createClass({
 	getInitialState() {

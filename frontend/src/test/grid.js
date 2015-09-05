@@ -2,7 +2,7 @@
 
 import * as assert from "assert"
 import {LibraryFilter} from "../live/library filter"
-import {GridBook, Catalogue} from "../live/library"
+import {promise_catalogue} from "../live/library"
 import {readFile} from "../live/denodified.js"
 
 var LibraryFilterMock = new LibraryFilter( () => [
@@ -26,14 +26,14 @@ var LibraryFilterMock = new LibraryFilter( () => [
 		}
 ] )
 
-var mock_library_downloader = () => readFile( "../../../test-data/mea-katalogo-2.json")
-
-
 describe('library', () => {
+	var mock_library_downloader = () => readFile( "../../../test-data/mea-katalogo-2.json")
+	var mock_catalogue = promise_catalogue(mock_library_downloader())
+
 	describe('.get_all_books()', () => {
 		it('should get seven books', (done) => {
-			Catalogue(mock_library_downloader).get_all_books().then( bb => {
-				assert.equal(1649, bb.length)
+			mock_catalogue.then( c=>{
+				assert.equal(1649, c.get_all_books().length)
 				done()
 			})
 		})
