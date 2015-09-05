@@ -1,8 +1,8 @@
 /* @flow */
 
 import * as assert from 'assert'
-import {LibraryFilter} from '../library filter'
-import {GridBook, get_all_books} from '../library'
+import {LibraryFilter} from '../live/library filter'
+import {GridBook, get_all_books} from '../live/library'
 
 var LibraryFilterMock = new LibraryFilter( () => [
 		{
