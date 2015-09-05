@@ -1,0 +1,10 @@
+.cabal-sandbox
+cabal.sandbox.config
+.idea
+.*.swp
+flow-linux64-latest*
+flow
+frontend/src/node_modules
+frontend/web/javascript
+frontend/src/tags
+lib
