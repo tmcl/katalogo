@@ -56,13 +56,13 @@ var LibraryGrid = React.createClass({
 					  rowHeight={50}
 					  rowGetter={this._rowGetter}
 					  rowsCount={this.theLength()}
-					  width={750}
-					  height={5000}
+					  width={770}
+					  height={500}
 					  headerHeight={50}
 				 >
 				 <Column
 					label="Numero"
-					width={50}
+					width={70}
 					dataKey="callnumber"
 				 />
 				 <Column
