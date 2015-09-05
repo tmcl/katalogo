@@ -2,8 +2,8 @@
 
 import * as assert from "assert"
 import {LibraryFilter} from "../live/library filter"
-import {promise_catalogue} from "../live/library"
-import {readFile} from "../live/denodified.js"
+import {Catalogue} from "../live/library"
+import * as fs from 'fs'
 
 var LibraryFilterMock = new LibraryFilter( () => [
 		{
@@ -27,16 +27,11 @@ var LibraryFilterMock = new LibraryFilter( () => [
 ] )
 
 describe('library', () => {
-	var mock_library_downloader = () => readFile( "../../../test-data/mea-katalogo-2.json")
-	var mock_catalogue = promise_catalogue(mock_library_downloader())
+	var mock_library_json = fs.readFileSync( "../../../test-data/mea-katalogo-2.json", 'utf-8')
+	var mock_catalogue = Catalogue(mock_library_json)
 
 	describe('.get_all_books()', () => {
-		it('should get seven books', (done) => {
-			mock_catalogue.then( c=>{
-				assert.equal(1649, c.get_all_books().length)
-				done()
-			})
-		})
+		it('should get seven books', () => assert.equal(1649, mock_catalogue.get_all_books().length))
 	})
 })
 
