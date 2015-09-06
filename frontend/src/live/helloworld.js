@@ -19,12 +19,13 @@ var LibraryGrid = React.createClass({
 		this.filterRowsBy(this.state.filterBy)
 	},
 
-	filterRowsBy(filterBy) {
-		var bookMatchesAuthor 
-			: (f:string) => (b:GridBook) => boolean
-			= (theFilter) => (book) => book.author.toLowerCase().indexOf(theFilter.toLowerCase()) >= 0
-		var rows = this.state.rows.slice()
-		var filteredRows = filterBy ? rows.filter(bookMatchesAuthor(filterBy)) : rows
+	filterRowsBy(filterBy: ?string) {
+		var filteredRows = filterBy 
+			? this.props.catalogue.get_books_with_filter({
+					field: "author",
+					search: filterBy
+				})
+			: this.props.catalogue.get_all_books()
 
 		this.setState({filteredRows, filterBy})
 	},

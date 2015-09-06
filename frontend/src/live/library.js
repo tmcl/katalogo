@@ -52,33 +52,56 @@ export type ImportedBook = {
 
 export type LibraryDownloader = () => Promise<string>
 
+export type GridFilter = 
+	{field: "author", search: string} |
+	{field: "title",  search: string}
+
 export type TCatalogue = { 
-	get_all_books: () => Array<GridBook>
+	get_all_books: () => Array<GridBook>,
+	get_books_with_filter: (filter: GridFilter) => Array<GridBook>
 }
 
 export var promise_web_catalogue 
 	: () => Promise<TCatalogue>
 	= () => promise_catalogue(ajax( "http://localhost/libraro/test-data/mea-katalogo-2.json" ))
 
-export var promise_catalogue 
+var promise_catalogue 
 	: (p: Promise<string>) => Promise<TCatalogue>
 	= liftP1(Catalogue)
 
 var imported_book_to_grid_book
 	: (b:ImportedBook) => GridBook
 	= book => ({
-		title: book.title ? book.title : "",
-		author: book.author_1 ? book.author_1 : "",
-		translator: book.translator_1,
-		callnumber: book.callnumber ? book.callnumber : "",
-		pagecount: book.pagecount ? parseInt(book.pagecount)||0 : 0,
-		year: book.year ? parseInt(book.year) || 0 : 0,
-		publisher: book.publisher ? book.publisher : ""
+		title      : book.title         ? book.title                  : "",
+		author     : book.author_1      ? book.author_1               : "",
+		translator : book.translator_1,
+		callnumber : book.callnumber    ? book.callnumber             : "",
+		pagecount  : book.pagecount     ? parseInt(book.pagecount)||0 : 0,
+		year       : book.year          ? parseInt(book.year) || 0    : 0,
+		publisher  : book.publisher     ? book.publisher              : ""
 	})
 
 var imported_books_to_grid_books
 	: (books: Array<ImportedBook>) => Array<GridBook>
 	= (books) => books.map(imported_book_to_grid_book)
+
+export var filter_matches_book
+	: (filter: GridFilter) => (book: GridBook) => boolean
+	= (filter) => (book) => book[filter.field].toLowerCase().indexOf(filter.search.toLowerCase()) >= 0
+
+var filter_books
+	: (books: Array<GridBook>, filter: GridFilter) => Array<GridBook>
+	= (books, filter) => books.filter(filter_matches_book(filter))
+
+var intersection = (f, g) => (t) => f(t) && g(t)
+
+var combine_filters 
+	: (filters: Array<GridFilter>) => (book: GridBook) => boolean
+	= (filters) => filters.map(filter_matches_book).reduce(intersection)
+
+var filtered_books
+	: (filters: Array<GridFilter>, books: Array<GridBook>) => Array<GridBook>
+	= (filters, books) => books.filter(combine_filters(filters))
 
 export function Catalogue (library_json: string): TCatalogue {
 	var read_library
@@ -130,5 +153,11 @@ export function Catalogue (library_json: string): TCatalogue {
 	var get_all_books 
 		= () => imported_books_to_grid_books(get_library_cached())
 
-	return { get_all_books: get_all_books }
+	var get_books_with_filter
+		= (filter: GridFilter) => filter_books(get_all_books(), filter)
+
+	return { 
+		get_all_books: get_all_books,
+		get_books_with_filter: get_books_with_filter
+  	}
 }
