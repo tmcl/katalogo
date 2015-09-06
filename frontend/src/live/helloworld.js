@@ -4,23 +4,19 @@ import * as React from 'react'
 import {Table, Column} from 'fixed-data-table'
 import {Catalogue, GridBook, promise_web_catalogue} from './library'
 
-
-var rows = promise_web_catalogue().then( c => c.get_all_books() )
+var catalogue = promise_web_catalogue()
 
 var LibraryGrid = React.createClass({
 	getInitialState() {
 		return {
-			rows: [],
+			rows: this.props.catalogue.get_all_books(),
 			filteredRows: null,
 			filterBy: null
 		}
 	},
 
 	componentWillMount() {
-		this.props.rows_promise.then(
-				rr => {this.setState({rows: rr});this.filterRowsBy(this.state.filterBy)}
-		)
-
+		this.filterRowsBy(this.state.filterBy)
 	},
 
 	filterRowsBy(filterBy) {
@@ -87,8 +83,11 @@ var LibraryGrid = React.createClass({
 
 })
 
-React.render(
-	<LibraryGrid rows_promise={rows} />,
-	document.getElementById('example')
-)
+catalogue.then( c =>
+	React.render(
+		<LibraryGrid catalogue={c} />,
+		document.getElementById('example')
+	)
+).catch( err => { alert("error"); console.log(err)
+} )
 
