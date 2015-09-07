@@ -53,12 +53,15 @@ export type ImportedBook = {
 export type LibraryDownloader = () => Promise<string>
 
 export type GridFilter = 
-	{field: "author", search: string} |
-	{field: "title",  search: string}
+	{field: "author",      search: string} |
+	{field: "title",       search: string} |
+	{field: "translator",  search: string} |
+	{field: "any",         search: string}
 
 export type TCatalogue = { 
 	get_all_books: () => Array<GridBook>,
-	get_books_with_filter: (filter: GridFilter) => Array<GridBook>
+	get_books_with_filter: (filter: GridFilter) => Array<GridBook>,
+	get_filtered_books: (filters: Array<GridFilter>) => Array<GridBook>
 }
 
 export var promise_web_catalogue 
@@ -85,9 +88,35 @@ var imported_books_to_grid_books
 	: (books: Array<ImportedBook>) => Array<GridBook>
 	= (books) => books.map(imported_book_to_grid_book)
 
+var string_matches_string 
+	= (needle, haystack) => {
+		if ( typeof haystack !== "string" )
+			return false
+		return haystack.toLowerCase().indexOf(needle.toLowerCase()) >= 0
+	}
+
+var field_to_filter
+	= (filter: GridFilter) => {
+		if (filter.field == "any")
+		{
+			return (book) => Object.keys(book).reduce((b, k) => b||string_matches_string(filter.search, book[k]), false)
+		}
+		else
+		{
+			// $FlowFixMe ignore me
+			return (book) => string_matches_string(filter.search, book[filter.field])
+		}
+	}
+
+export var filter_matches_book
+	: (filter: GridFilter) => (book: GridBook) => boolean
+	= field_to_filter 
+
+/*
 export var filter_matches_book
 	: (filter: GridFilter) => (book: GridBook) => boolean
 	= (filter) => (book) => book[filter.field].toLowerCase().indexOf(filter.search.toLowerCase()) >= 0
+	*/
 
 var filter_books
 	: (books: Array<GridBook>, filter: GridFilter) => Array<GridBook>
@@ -156,8 +185,13 @@ export function Catalogue (library_json: string): TCatalogue {
 	var get_books_with_filter
 		= (filter: GridFilter) => filter_books(get_all_books(), filter)
 
+	var get_filtered_books 
+		: (f: Array<GridFilter>) => Array<GridBook>
+		= (filters: Array<GridFilter>) => filtered_books(filters, get_all_books())
+
 	return { 
-		get_all_books: get_all_books,
-		get_books_with_filter: get_books_with_filter
+		get_all_books,
+		get_books_with_filter,
+		get_filtered_books
   	}
 }

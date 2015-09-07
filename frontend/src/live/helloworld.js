@@ -3,40 +3,49 @@
 import * as React from 'react'
 import {Table, Column} from 'fixed-data-table'
 import {Catalogue, GridBook, promise_web_catalogue} from './library'
+import {FilterSelector} from './filterbar'
 
+//var catalogue = Promise.resolve(new Catalogue('[]'))
 var catalogue = promise_web_catalogue()
 
 var LibraryGrid = React.createClass({
 	getInitialState() {
+		var filters
+			: Array<{field: string, search: string}> 
+			= []
 		return {
+			filters: filters,
+			text: "",
 			rows: this.props.catalogue.get_all_books(),
 			filteredRows: null,
-			filterBy: null
 		}
+		
+	},
+
+	update_filters: function(text: string, filters: Array<{field: string, search: string}>)
+	{
+		this.setState({
+			filters: filters,
+			text: text
+		})
+		this.filterRowsBy(filters, text)
 	},
 
 	componentWillMount() {
-		this.filterRowsBy(this.state.filterBy)
+		this.filterRowsBy(this.state.filters, this.state.text)
 	},
 
-	filterRowsBy(filterBy: ?string) {
-		var filteredRows = filterBy 
-			? this.props.catalogue.get_books_with_filter({
-					field: "author",
-					search: filterBy
-				})
+	filterRowsBy(filters: Array<{field: string, search: string}>, free_text: string) {
+		var filteredRows = filters.length 
+			? this.props.catalogue.get_filtered_books(filters.concat([{field: "any", search: free_text}]))
 			: this.props.catalogue.get_all_books()
 
-		this.setState({filteredRows, filterBy})
+		this.setState({filteredRows, filters})
 	},
 
 	_rowGetter(rowIndex) {
 		var rows = this.state.filteredRows
 		return rows ? rows[rowIndex] : undefined
-	},
-
-	_onFilterChange(e) {
-		this.filterRowsBy(e.target.value)
 	},
 
 	theLength() {
@@ -46,8 +55,18 @@ var LibraryGrid = React.createClass({
 	render() {
 		return (
 			<div>
-				 <h1>Saluton, mundo!</h1>
-				 <input onChange={this._onFilterChange} placeholder='Filter by author' />
+				 <h1>La Katalogo de la MEA</h1>
+				 <FilterSelector
+				 	filters={this.state.filters}
+					all_filters={[
+						{value: "any", label: "iu ajn"},
+						{value: "author", label: "verkisto"},
+						{value: "title", label: "titolo"},
+						{value: "translator", label: "tradukinto"},
+					]}
+					text={this.state.text}
+					on_change={this.update_filters}
+					/>
 				 <br />
 				 <Table
 					  rowHeight={50}
