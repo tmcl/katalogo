@@ -66,7 +66,7 @@ export type TCatalogue = {
 
 export var promise_web_catalogue 
 	: () => Promise<TCatalogue>
-	= () => promise_catalogue(ajax( "http://localhost/libraro/test-data/mea-katalogo-2.json" ))
+	= () => promise_catalogue(ajax( mea.paths.catalogue ))
 
 var promise_catalogue 
 	: (p: Promise<string>) => Promise<TCatalogue>
