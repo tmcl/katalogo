@@ -1,5 +1,5 @@
 {-# LANGUAGE PackageImports #-}
-import "sqlite2" Application (develMain)
+import "sqlite" Application (develMain)
 import Prelude (IO)
 
 main :: IO ()

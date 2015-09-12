@@ -1,20 +1,20 @@
 Default: &defaults
-  database: sqlite2.sqlite3
+  database: sqlite.sqlite3
   poolsize: 10
 
 Development:
   <<: *defaults
 
 Testing:
-  database: sqlite2_test.sqlite3
+  database: sqlite_test.sqlite3
   <<: *defaults
 
 Staging:
-  database: sqlite2_staging.sqlite3
+  database: sqlite_staging.sqlite3
   poolsize: 100
   <<: *defaults
 
 Production:
-  database: sqlite2_production.sqlite3
+  database: sqlite_production.sqlite3
   poolsize: 100
   <<: *defaults

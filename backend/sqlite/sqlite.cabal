@@ -1,4 +1,4 @@
-name:              sqlite2
+name:              sqlite
 version:           0.0.0
 cabal-version:     >= 1.8
 build-type:        Simple
@@ -83,13 +83,13 @@ library
                  , vector
                  , time
 
-executable         sqlite2
+executable         sqlite
     if flag(library-only)
         Buildable: False
 
     main-is:           main.hs
     hs-source-dirs:    app
-    build-depends:     base, sqlite2
+    build-depends:     base, sqlite
 
     ghc-options:       -threaded -O2 -rtsopts -with-rtsopts=-N
 
@@ -117,7 +117,7 @@ test-suite test
                 TupleSections
 
     build-depends: base
-                 , sqlite2
+                 , sqlite
                  , yesod-test >= 1.4.3 && < 1.5
                  , yesod-core
                  , yesod

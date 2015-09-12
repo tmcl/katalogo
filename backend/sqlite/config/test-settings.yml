@@ -1,2 +1,2 @@
 database:
-  database: sqlite2_test.sqlite3
+  database: sqlite_test.sqlite3
