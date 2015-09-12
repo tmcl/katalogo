@@ -10,5 +10,5 @@ cd $APP_DIR/frontend/src; flow
 cd $APP_DIR
 xterm -T babel -e "babel --modules common -w -d frontend/compiled frontend/src --ignore frontend/src/node_modules" &
 sleep 2s;
-xterm -T browserify -e "zsh -c \"while true; do browserify -o frontend/web/javascript/bundle.js frontend/compiled/live/helloworld.js; inotifywait -r frontend/compiled; done\"" &
+xterm -T browserify -e "zsh -c \"while true; do browserify -o backend/sqlite/static/javascript/bundle.js frontend/compiled/live/helloworld.js; inotifywait -r frontend/compiled; done\"" &
 

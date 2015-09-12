@@ -7,3 +7,4 @@ frontend/compiled
 frontend/src/node_modules
 frontend/src/tags
 frontend/web/javascript
+backend/sqlite/static/javascript/bundle.js
