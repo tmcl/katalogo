@@ -16,4 +16,3 @@ import Yesod.Static
 --
 --     StaticFile ["js", "script.js"] []
 staticFiles (appStaticDir compileTimeAppSettings)
-js_bundle_js = StaticRoute ["javascript", "bundle.js"] []

@@ -34,6 +34,7 @@ export var ajax
 		return Promise.promise( (resolve, reject, notify) => {
 			request.onreadystatechange = handler(resolve, reject, request)
 			request.open("GET", url, true)
+			request.setRequestHeader("Accept", "application/json")
 			request.send()
 		})
 }

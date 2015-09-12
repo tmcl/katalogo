@@ -106,7 +106,7 @@ var LibraryGrid = React.createClass({
 catalogue.then( c =>
 	React.render(
 		<LibraryGrid catalogue={c} />,
-		document.getElementById('example')
+		document.getElementById('container')
 	)
 ).catch( err => { alert("error"); console.log(err)
 } )

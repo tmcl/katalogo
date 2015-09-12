@@ -16,4 +16,6 @@ $newline never
         ^{pageBody pc}
       <footer>
         #{appCopyright $ appSettings master}
-   <script src="@{StaticR js_bundle_js}">
+   <script src="@{StaticR javascript_bundle_js}">
+   <link rel="stylesheet" href="@{StaticR css_filter_css}">
+   <link rel="stylesheet" href="@{StaticR css_fixed_data_table_css}">
