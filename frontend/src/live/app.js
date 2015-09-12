@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {Table, Column} from 'fixed-data-table'
 import {Catalogue, GridBook, promise_web_catalogue} from './library'
-import {FilterSelector} from './filterbar'
+import {FilterBar} from './filterbar'
 
 //var catalogue = Promise.resolve(new Catalogue('[]'))
 var catalogue = promise_web_catalogue()
@@ -56,7 +56,8 @@ var LibraryGrid = React.createClass({
 		return (
 			<div>
 				 <h1>La Katalogo de la MEA</h1>
-				 <FilterSelector
+				 <button>Import</button>
+				 <FilterBar
 				 	filters={this.state.filters}
 					all_filters={[
 						{value: "any", label: "iu ajn"},
@@ -67,7 +68,6 @@ var LibraryGrid = React.createClass({
 					text={this.state.text}
 					on_change={this.update_filters}
 					/>
-				 <br />
 				 <Table
 					  rowHeight={50}
 					  rowGetter={this._rowGetter}
@@ -76,26 +76,26 @@ var LibraryGrid = React.createClass({
 					  height={500}
 					  headerHeight={50}
 				 >
-				 <Column
-					label="Numero"
-					width={70}
-					dataKey="callnumber"
-				 />
-				 <Column
-					label="Titolo"
-					width={300}
-					dataKey="title"
-				 />
-				 <Column
-					label="Verkisto"
-					width={200}
-					dataKey="author"
-				 />
-				 <Column
-					label="Tradukinto"
-					width={200}
-					dataKey="translator"
-				 />
+					 <Column
+						label="Numero"
+						width={70}
+						dataKey="callnumber"
+					 />
+					 <Column
+						label="Titolo"
+						width={300}
+						dataKey="title"
+					 />
+					 <Column
+						label="Verkisto"
+						width={200}
+						dataKey="author"
+					 />
+					 <Column
+						label="Tradukinto"
+						width={200}
+						dataKey="translator"
+					 />
 				 </Table>
 			</div>
 		)

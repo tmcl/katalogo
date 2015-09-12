@@ -97,7 +97,7 @@ var Filter = React.createClass({
 
 var quote_if_has_space = (str) => str.match(" ") ? '"' + str + '"' : str
 
-export var FilterSelector = React.createClass({
+export var FilterBar = React.createClass({
 	input_did_change: function(new_text: string): void {
 		if (!this.props.on_change || !new_text)
 			return
