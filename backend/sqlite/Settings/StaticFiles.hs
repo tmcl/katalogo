@@ -1,7 +1,7 @@
 module Settings.StaticFiles where
 
 import Settings     (appStaticDir, compileTimeAppSettings)
-import Yesod.Static (staticFiles)
+import Yesod.Static
 
 -- This generates easy references to files in the static directory at compile time,
 -- giving you compile-time verification that referenced files exist.
@@ -16,3 +16,4 @@ import Yesod.Static (staticFiles)
 --
 --     StaticFile ["js", "script.js"] []
 staticFiles (appStaticDir compileTimeAppSettings)
+js_bundle_js = StaticRoute ["javascript", "bundle.js"] []
