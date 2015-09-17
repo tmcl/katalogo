@@ -82,3 +82,4 @@ sampleForm :: Form (FileInfo, Text)
 sampleForm = renderBootstrap3 BootstrapBasicForm $ (,)
     <$> fileAFormReq "Choose a file"
     <*> areq textField (withSmallInput "What's on the file?") Nothing
+-- vim:set expandtab:

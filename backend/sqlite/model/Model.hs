@@ -54,3 +54,4 @@ instance ToJSON ImportedBook where
          the_language Nothing  = Nothing
          the_language (Just x) = Just $ show x
 
+-- vim:set expandtab:

@@ -15,3 +15,4 @@ spec = withApp $ do
         it "gives a 200" $ do
             get FaviconR
             statusIs 200
+-- vim:set expandtab:

@@ -16,3 +16,4 @@ import Yesod.Static
 --
 --     StaticFile ["js", "script.js"] []
 staticFiles (appStaticDir compileTimeAppSettings)
+-- vim:set expandtab:
