@@ -12,7 +12,8 @@ var MenuItem = React.createClass({
 		return (
 			<div 
 				onClick={() => this.props.on_select(this.props.item)} 
-				className={class_prefix + "menu-item"}>
+				className={class_prefix + "menu-item"}
+			>
 				{this.props.item.label}
 			</div>
 		)
