@@ -17,7 +17,7 @@ instance ToJSON ImportedBook where
       "note"                .= importedBookNote ib,
       "callnumber"          .= importedBookCallnumber ib,
       "title"               .= importedBookTitle ib,
-      "original_language"   .= (the_language (importedBookOriginal_language ib)),
+      "original_language"   .= the_language (importedBookOriginal_language ib),
       "author_title_1"      .= importedBookAuthor_title_1 ib,
       "author_1"            .= importedBookAuthor_1 ib,
       "other_names_1"       .= importedBookOther_names_1 ib,

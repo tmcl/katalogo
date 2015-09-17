@@ -7,7 +7,6 @@ import {Catalogue, GridBook, promise_web_catalogue} from './library'
 import {FilterBar} from './filterbar'
 import {submit_form} from "./utilities"
 
-//var catalogue = Promise.resolve(new Catalogue('[]'))
 var catalogue = promise_web_catalogue()
 
 var LibraryGrid = React.createClass({
@@ -30,14 +29,14 @@ var LibraryGrid = React.createClass({
 			filters: filters,
 			text: text
 		})
-		this.filterRowsBy(filters, text)
+		this.filter_rows_by(filters, text)
 	},
 
 	componentWillMount() {
-		this.filterRowsBy(this.state.filters, this.state.text)
+		this.filter_rows_by(this.state.filters, this.state.text)
 	},
 
-	filterRowsBy(filters: Array<{field: string, search: string}>, free_text: string) {
+	filter_rows_by(filters: Array<{field: string, search: string}>, free_text: string) {
 		var filteredRows = filters.length 
 			? this.props.catalogue.get_filtered_books(filters.concat([{field: "any", search: free_text}]))
 			: this.props.catalogue.get_all_books()
