@@ -4,7 +4,7 @@ module Import.NoFoundation
 
 import ClassyPrelude.Yesod   as Import
 import Model                 as Import
-import Language              as Import
+import EarlyModel            as Import
 import Settings              as Import
 import Settings.StaticFiles  as Import
 import Yesod.Auth            as Import

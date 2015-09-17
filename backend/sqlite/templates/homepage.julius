@@ -1,5 +1,6 @@
 var mea = { 
    paths: {
-      catalogue: "@{CatalogueR}"
+      catalogue: "@{CatalogueR}",
+      json_import: "@{JsonImportR}",
    }
 }

@@ -19,3 +19,4 @@ $newline never
    <script src="@{StaticR javascript_bundle_js}">
    <link rel="stylesheet" href="@{StaticR css_filter_css}">
    <link rel="stylesheet" href="@{StaticR css_fixed_data_table_css}">
+   <link rel="stylesheet" href="@{StaticR css_rc_dialog_index_css}">

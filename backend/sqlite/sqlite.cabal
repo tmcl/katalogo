@@ -22,7 +22,8 @@ library
                      Settings.StaticFiles
                      Handler.Common
                      Handler.Home
-    other-modules: Language
+                     Utilities
+    other-modules: EarlyModel
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -83,6 +84,8 @@ library
                  , containers
                  , vector
                  , time
+                 , transformers
+                 , conduit-extra
 
 executable         sqlite
     if flag(library-only)

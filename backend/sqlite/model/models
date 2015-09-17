@@ -9,9 +9,30 @@ Email
     verkey Text Maybe
     UniqueEmail email
 
+Creator
+    title       Text Maybe
+	firstNames  Text Maybe
+    lastNames   Text
+
+CreatorRole
+    creator Creator
+    role    AuthorRole
+    CommonCreatorRole creator role
+    
+Book
+    isHeld      Holding
+    callnumber  Text          Maybe 
+    title       Text
+    author      [CreatorRole]
+    pagecount   Int           Maybe 
+    year        Int           Maybe
+    city        Text          Maybe
+    country     Text          Maybe
+    notes       Text          Maybe
+
 ImportedBook
     note                Text     Maybe 
-    callnumber          Text     Maybe ,
+    callnumber          Text     Maybe
     original_language   Language Maybe 
     title               Text     Maybe 
     author_title_1      Text     Maybe 
@@ -46,6 +67,4 @@ ImportedBook
     nothing_7           Text     Maybe 
     nothing_8           Text     Maybe 
     nothing_9           Text     Maybe 
-    
-
- -- By default this file is used in Model.hs (which is imported by Foundation.hs)
+    deriving Show

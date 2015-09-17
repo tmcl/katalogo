@@ -1,9 +1,19 @@
 module Handler.Home where
 
 import Import
-import Data.Aeson ()
+import Data.Aeson
+import Yesod.Core.Types
+import Data.Conduit.List
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3,
                               withSmallInput)
+import Control.Applicative
+import qualified Data.ByteString as B
+import qualified Data.ByteString.Char8 as B8
+import qualified Data.Conduit.Attoparsec as CA
+import Data.Aeson
+import Data.Conduit
+import Data.Conduit.Binary
+import Control.Monad.IO.Class
 
 catalogue :: [ImportedBook]
 catalogue = [ImportedBook {
@@ -47,6 +57,38 @@ catalogue = [ImportedBook {
 
 getCatalogueR :: Handler Value
 getCatalogueR = returnJson catalogue
+
+maybify (Error s) = Left (Right (show s))
+maybify (Success s) = Right s
+
+-- parseMessage :: (MonadIO m, MonadResource m) => Conduit B.ByteString m B.ByteString
+parseMessage = CA.conduitParserEither json =$= awaitForever go
+   where
+      go (Left s) = yield $ Left (Left s)
+      go (Right (_, msg)) = yield $ maybify $ ((fromJSON msg)::Result ImportedBook)
+
+
+squiggle = awaitForever go
+   where
+      go x = yield $ B8.pack $ show x ++ "\n"
+
+-- postJsonImportR :: Handler Value
+postJsonImportR = do
+   squidj <- jsonImportForm
+   sendTheFile squidj
+
+sendTheFile (Just fi) = runResourceT $ do
+   fileSource fi $$ parseMessage =$= squiggle =$ Data.Conduit.Binary.sinkFile "/tmp/aeou"
+   return "foo"
+sendTheFile Nothing = return ("bar"::Text)
+
+jsonImportForm = do
+   result <- runInputPostResult $ ireq fileField "json_file"
+   let msubmission = case result of
+                       FormSuccess res -> Just res
+                       _               -> Nothing
+   return msubmission
+
 
 -- This is a handler function for the GET request method on the HomeR
 -- resource pattern. All of your resource patterns are defined in

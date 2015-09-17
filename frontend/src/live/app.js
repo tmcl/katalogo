@@ -1,9 +1,11 @@
 /** @flow */
 
 import * as React from 'react'
+import Dialog from 'rc-dialog'
 import {Table, Column} from 'fixed-data-table'
 import {Catalogue, GridBook, promise_web_catalogue} from './library'
 import {FilterBar} from './filterbar'
+import {submit_form} from "./utilities"
 
 //var catalogue = Promise.resolve(new Catalogue('[]'))
 var catalogue = promise_web_catalogue()
@@ -55,8 +57,6 @@ var LibraryGrid = React.createClass({
 	render() {
 		return (
 			<div>
-				 <h1>La Katalogo de la MEA</h1>
-				 <button>Import</button>
 				 <FilterBar
 				 	filters={this.state.filters}
 					all_filters={[
@@ -103,9 +103,71 @@ var LibraryGrid = React.createClass({
 
 })
 
+var ImportDialog = React.createClass({
+	on_close() {
+		if ( this.props.on_close )
+			this.props.on_close()
+	},
+
+	upload() {
+		submit_form(this.refs.form.getDOMNode()).then(x => alert("yay\n" + x), x => alert("boo\n" + x))
+		return false
+	},
+
+	render() {
+		return (
+			<Dialog
+				visible={this.props.is_open}
+				title="Import Json records"
+				animation="zoom"
+				maskAnimation="fade"
+				onClose={this.on_close}
+			>
+				<form ref="form"
+					method="post" 
+					encType="multipart/form-data" 
+					action={mea.paths.json_import}
+				>
+					<input name="json_file" type="file">Json file</input>
+					<button onClick={this.upload}>Import them</button>
+				</form>
+			</Dialog>
+		)
+	}
+})
+
+var App = React.createClass({
+	getInitialState() {
+		return {
+			dialog_is_open: false
+		}
+	},
+
+	open_import_dialog() {
+		this.setState({dialog_is_open: true})
+	},
+
+	close_import_dialog() {
+		this.setState({dialog_is_open: false})
+	},
+
+	render() {
+		return (
+			<div>
+				 <h1>La Katalogo  de la MEA — changed</h1>
+				 <p>If i want to throw some text in here, I probably should use md</p>
+				 <button onClick={this.open_import_dialog}>Import</button>
+				 <ImportDialog is_open={this.state.dialog_is_open} on_close={this.close_import_dialog} />
+				 <LibraryGrid catalogue={this.props.catalogue} />
+			</div>
+		)
+	}
+
+})
+
 catalogue.then( c =>
 	React.render(
-		<LibraryGrid catalogue={c} />,
+		<App catalogue={c} />,
 		document.getElementById('container')
 	)
 ).catch( err => { alert("error"); console.log(err)

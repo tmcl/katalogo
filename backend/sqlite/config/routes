@@ -2,6 +2,7 @@
 /auth   AuthR   Auth   getAuth
 
 /app/catalogue	CatalogueR GET
+/app/json-import JsonImportR POST
 /favicon.ico FaviconR GET
 /robots.txt RobotsR GET
 

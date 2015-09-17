@@ -20,21 +20,29 @@ export var cache_method
 	return cache
 })(null)
 
-export var ajax
-	: (url:string) => Promise
-	= (url) => {
-		var handler = (resolve, reject, request) => () => {
-			if (request.readyState == 4 && request.status == 200)
-				resolve(request.responseText)
-			else if ( request.readyState == 4 && request.status !== 200 )
-				reject(request.status)
-		}
+var handler = (resolve, reject, request) => () => {
+	if (request.readyState == 4 && request.status == 200)
+		resolve(request.responseText)
+	else if ( request.readyState == 4 && request.status !== 200 )
+		reject(request.status)
+}
 
-		var request = new XMLHttpRequest()
+var ajax_by_method
+	: (method: string) => (url:string, thing_to_send?: any) => Promise<string>
+	= (method) => (url, thing_to_send) => {
 		return Promise.promise( (resolve, reject, notify) => {
+			var request = new XMLHttpRequest()
 			request.onreadystatechange = handler(resolve, reject, request)
-			request.open("GET", url, true)
+			request.open(method, url, true)
 			request.setRequestHeader("Accept", "application/json")
-			request.send()
+			request.send(thing_to_send)
 		})
 }
+
+export var ajax
+	: (url:string) => Promise<String>
+	= ajax_by_method("GET")
+
+export var submit_form
+	: (form: any) => Promise<string>
+	= (form) => ajax_by_method(form.method)(form.action, new FormData(form))
