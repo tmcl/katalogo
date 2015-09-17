@@ -52,6 +52,34 @@ export type ImportedBook = {
 
 export type LibraryDownloader = () => Promise<string>
 
+class NewGridFilter {
+	search: string;
+	filter: (b: GridBook) => boolean;
+	
+	constructor(search: string) {
+		this.search = search
+	}
+}
+
+class TitleGridFilter extends NewGridFilter {
+	filter(book: GridBook) {
+		return string_matches_string(this.search, book.title)
+	}
+}
+
+class AuthorGridFilter extends NewGridFilter {
+	filter(book: GridBook) {
+		return string_matches_string(this.search, book.author)
+	}
+}
+
+
+
+export type FieldGridFilter = 
+	{field: "author",      search: string} |
+	{field: "title",       search: string} |
+	{field: "translator",  search: string}
+
 export type GridFilter = 
 	{field: "author",      search: string} |
 	{field: "title",       search: string} |
@@ -89,34 +117,44 @@ var imported_books_to_grid_books
 	= (books) => books.map(imported_book_to_grid_book)
 
 var string_matches_string 
-	= (needle, haystack) => {
-		if ( typeof haystack !== "string" )
-			return false
-		return haystack.toLowerCase().indexOf(needle.toLowerCase()) >= 0
-	}
+	= (needle, haystack) => typeof haystack !== "string" ? false : haystack.toLowerCase().indexOf(needle.toLowerCase()) >= 0
+
+type Filter = (book:GridBook) => boolean
+
+var any_filter 
+	: (filter: GridFilter) => Filter
+	= (filter) => (book) => Object.keys(book).reduce((b, k) => b || string_matches_string(filter.search, book[k]), false)
+var field_filter 
+	: (filter: FieldGridFilter) => Filter
+	= (filter) => (book) => string_matches_string(filter.search, book[filter.field])
+
+	/*
+var new_field_to_filter
+	: (filter: GridFilter) => Filter
+	= (filter: GridFilter) => {
+		switch (filter.field) {
+			case "any":
+				return any_filter(filter)
+			case "title":
+				return field_filter(filter)
+			case "author":
+				return field_filter(filter)
+			case "translator":
+				return field_filter(filter)
+		}
+	} */
+
 
 var field_to_filter
-	= (filter: GridFilter) => {
-		if (filter.field == "any")
-		{
-			return (book) => Object.keys(book).reduce((b, k) => b||string_matches_string(filter.search, book[k]), false)
-		}
-		else
-		{
-			// $FlowFixMe ignore me
-			return (book) => string_matches_string(filter.search, book[filter.field])
-		}
-	}
+	: (filter: GridFilter) => Filter
+	= (filter: GridFilter) => filter.field == "any" 
+		? any_filter(filter) 
+		// $FlowFixMe i statically know that all possible GridFilters are FieldGridFilters except for the any GridFilter
+		: field_filter(filter)
 
 export var filter_matches_book
 	: (filter: GridFilter) => (book: GridBook) => boolean
 	= field_to_filter 
-
-/*
-export var filter_matches_book
-	: (filter: GridFilter) => (book: GridBook) => boolean
-	= (filter) => (book) => book[filter.field].toLowerCase().indexOf(filter.search.toLowerCase()) >= 0
-	*/
 
 var filter_books
 	: (books: Array<GridBook>, filter: GridFilter) => Array<GridBook>
@@ -189,7 +227,7 @@ export function Catalogue (library_json: string): TCatalogue {
 		: (f: Array<GridFilter>) => Array<GridBook>
 		= (filters: Array<GridFilter>) => filtered_books(filters, get_all_books())
 
-	return { 
+	return {
 		get_all_books,
 		get_books_with_filter,
 		get_filtered_books
